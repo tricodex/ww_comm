@@ -683,7 +683,7 @@ class WaterworldBase:
 
              # Flatten and pad messages correctly
             messages = sum(self.communication_buffers[i], [])  # Flatten
-            print(messages)
+            
             padding_length = self.message_length * self.max_messages - len(messages)
             messages.extend([0] * padding_length)  # Pad with zeros
 
@@ -761,6 +761,7 @@ class WaterworldBase:
         if evader_shape.counter >= self.n_coop:
             # For giving reward to pursuer
             pursuer_shape.food_indicator = 1
+            print("Evader consumed by pursuer")
 
         return False
 
