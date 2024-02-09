@@ -47,29 +47,7 @@ class WaterworldBase:
         render_mode=None,
         FPS=FPS,
     ):
-        """Input keyword arguments.
-
-        n_pursuers: number of agents
-        n_evaders: number of food particles present
-        n_poisons: number of poisons present
-        n_obstacles: number of obstacles
-        n_coop: number of agents required to capture a food particle
-        n_sensors: number of sensors on each agent
-        sensor_range: range of the sensor
-        radius: radius of the agent
-        obstacle_radius: radius of the obstacle
-        obstacle_coord: coordinates of the obstacles, this is an [n_obstacles, 2] array with values >0, <1
-        pursuer_max_accel: maximum acceleration of the agents
-        pursuer_speed: maximum speed of the agents
-        evader_speed: maximum speed of the food particles
-        poison_speed: maximum speed of the poison particles
-        poison_reward: reward (or penalty) for getting a poison particle
-        food_reward: reward for getting a food particle
-        encounter_reward: reward for being in the presence of food
-        thrust_penalty: scaling factor for the negative reard used to penalize large actions
-        local_ratio: proportion of reward allocated locally vs distributed globally among all agents
-        speed_features: whether to include entity speed in the state space
-        """
+        
         self.pixel_scale = 30 * 25
         self.clock = pygame.time.Clock()
         self.FPS = FPS  # Frames Per Second
@@ -546,6 +524,7 @@ class WaterworldBase:
         return self.observe(agent_id)
 
     def observe(self, agent_id):
+        print(f'the observe{np.array(self.last_obs[agent_id], dtype=np.float32)} end here')
         return np.array(self.last_obs[agent_id], dtype=np.float32)
 
     def observe_list(self):
@@ -683,7 +662,7 @@ class WaterworldBase:
 
              # Flatten and pad messages correctly
             messages = sum(self.communication_buffers[i], [])  # Flatten
-            
+            # print(messages)
             padding_length = self.message_length * self.max_messages - len(messages)
             messages.extend([0] * padding_length)  # Pad with zeros
 
@@ -696,6 +675,7 @@ class WaterworldBase:
             # Ensure the observation matches the defined space size
             assert len(full_observation) == self.observation_space[0].shape[0], "Observation size mismatch"
             observe_list.append(full_observation)
+            print(f'the observe list{observe_list}end here')
 
         return observe_list
 
@@ -761,7 +741,6 @@ class WaterworldBase:
         if evader_shape.counter >= self.n_coop:
             # For giving reward to pursuer
             pursuer_shape.food_indicator = 1
-            print("Evader consumed by pursuer")
 
         return False
 
