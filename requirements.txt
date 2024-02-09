@@ -1,0 +1,6 @@
+pettingzoo
+stable-baselines3
+supersuit
+pymunk
+scipy
+matplotlib
