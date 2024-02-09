@@ -21,7 +21,7 @@ MODEL_DIR = 'models'
 TRAIN_DIR = 'train'
 OPTIMIZE_DIR = 'optimize'
 
-def train_waterworld(env_fn, model_name, model_subdir, steps=100_000, seed=None, **hyperparam_kwargs):
+def train_waterworld(env_fn, model_name, model_subdir, steps=200_000, seed=None, **hyperparam_kwargs):
     
     if 'n_steps' in hyperparam_kwargs:
         hyperparam_kwargs['n_steps'] = int(hyperparam_kwargs['n_steps'])
@@ -82,7 +82,7 @@ def train_waterworld_parallel(env_fn, model_name, model_subdir, run_id, steps=10
     
     print(f"[{run_id}] Starting training on {str(env.metadata['name'])}.")
     env = ss.pettingzoo_env_to_vec_env_v1(env)
-    env = ss.concat_vec_envs_v1(env, 8, num_cpus=2, base_class="stable_baselines3")
+    env = ss.concat_vec_envs_v1(env, 50, num_cpus=2, base_class="stable_baselines3") # was 8
 
     model = None
     if model_name == "PPO":
@@ -214,17 +214,17 @@ def eval(env_fn, model_name, model_subdir=TRAIN_DIR, num_games=100, render_mode=
 # Train a model
 def run_train():
     # still arbitrary episodes and episode lengths
-    episodes, episode_lengths = 1, 98304
+    episodes, episode_lengths = 20, 98304
     total = episode_lengths*episodes
 
     # Train the waterworld environment with the specified model and settings
     train_waterworld(env_fn, mdl, TRAIN_DIR, steps=total, seed=0)
     
     # Evaluate the trained model against a random agent for 10 games without rendering
-    eval(env_fn, mdl, num_games=10, render_mode=None)
+    eval(env_fn, mdl, num_games=2, render_mode=None)
     
     # Evaluate the trained model against a random agent for 1 game with rendering
-    #eval(env_fn, mdl, num_games=1, render_mode="human")
+    eval(env_fn, mdl, num_games=1, render_mode="human")
     
 def run_eval():
     # Evaluate the trained model against a random agent for 10 games without rendering
@@ -243,8 +243,8 @@ def quick_test():
 
 if __name__ == "__main__":
     env_fn = waterworld_v4  
-    process_to_run = 'train'  # Choose "train", "optimize", "optimize_parallel" or "eval"
-    mdl = "Heuristic"# Choose "Heuristic", "PPO" or "SAC"
+    process_to_run = 'optimize'  # Choose "train", "optimize", "optimize_parallel" or "eval"
+    mdl = "PPO"# Choose "Heuristic", "PPO" or "SAC"
     
     # security check
     if mdl == "Heuristic":
