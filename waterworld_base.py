@@ -48,7 +48,7 @@ class WaterworldBase:
         FPS=FPS,
     ):
         
-        self.pixel_scale = 30 * 25
+        self.pixel_scale = 30 * 25 #750
         self.clock = pygame.time.Clock()
         self.FPS = FPS  # Frames Per Second
 
@@ -152,22 +152,18 @@ class WaterworldBase:
     def handle_communication(self, agent_id, action):
         obs = self.last_obs[agent_id]
 
-        closest_food_distance, closest_food_angle = self.get_closest_food_info(obs, self.n_sensors, self.sensor_range)
-        closest_poison_distance, closest_poison_angle = self.get_closest_poison_info(obs, self.n_sensors, self.sensor_range)
+        closest_food_distance, closest_food_velocity = self.get_closest_food_info(obs, self.n_sensors, self.sensor_range)
+        closest_poison_distance, closest_poison_velocity = self.get_closest_poison_info(obs, self.n_sensors, self.sensor_range)
 
         # Get agent's current position
         current_position = self.pursuers[agent_id].body.position
-
-
-        # Flatten the action array to a list to avoid concatenate error
-        # action_list = action.tolist()  # Convert numpy array to a list
 
         # Extract individual components of the action array, this works
         action_x, action_y = action[0], action[1]
 
         message = [
-            closest_food_distance, closest_food_angle,
-            closest_poison_distance, closest_poison_angle,
+            closest_food_distance, closest_food_velocity,
+            closest_poison_distance, closest_poison_velocity,
             current_position.x, current_position.y,
             action_x, action_y
         ]
@@ -177,20 +173,7 @@ class WaterworldBase:
                 self.communication_buffers[i].append(message)
 
 
-    # def handle_communication(self, agent_id):
-    #     obs = self.last_obs[agent_id]
-
-    #     closest_food_distance, closest_food_angle = self.get_closest_food_info(obs, self.n_sensors, self.sensor_range)
-    #     closest_poison_distance, closest_poison_angle = self.get_closest_poison_info(obs, self.n_sensors, self.sensor_range)
-
-    #     message = [
-    #         closest_food_distance, closest_food_angle,
-    #         closest_poison_distance, closest_poison_angle
-    #     ]
-
-    #     for i in range(self.n_pursuers):
-    #         if i != agent_id:
-    #             self.communication_buffers[i].append(message)
+    
 
 
 
@@ -480,7 +463,7 @@ class WaterworldBase:
             action = action * (self.pursuer_max_accel / thrust)
 
         # Update intent flag based on sensory data
-        self.intent_flags[agent_id] = self.determine_intent_from_observation(self.last_obs[agent_id])
+        # self.intent_flags[agent_id] = self.determine_intent_from_observation(self.last_obs[agent_id])
 
         # Handle communication with updated sensory data
         self.handle_communication(agent_id, action)
