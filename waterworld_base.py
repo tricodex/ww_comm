@@ -78,11 +78,8 @@ class WaterworldBase:
         self.poison_reward = poison_reward
         self.thrust_penalty = thrust_penalty
 
-        self.message_length = 4  # Length of each message
+        self.message_length = 8  # Length of each message
         self.max_messages = self.n_pursuers - 1    # Maximum number of messages in the buffer
-
-        
-        
         
 
         self.max_cycles = max_cycles
@@ -151,21 +148,49 @@ class WaterworldBase:
         closest_poison_distance_normalized = closest_poison_distance / sensor_range
 
         return closest_poison_distance_normalized, closest_poison_angle
-
-    def handle_communication(self, agent_id):
+    
+    def handle_communication(self, agent_id, action):
         obs = self.last_obs[agent_id]
 
         closest_food_distance, closest_food_angle = self.get_closest_food_info(obs, self.n_sensors, self.sensor_range)
         closest_poison_distance, closest_poison_angle = self.get_closest_poison_info(obs, self.n_sensors, self.sensor_range)
 
+        # Get agent's current position
+        current_position = self.pursuers[agent_id].body.position
+
+
+        # Flatten the action array to a list to avoid concatenate error
+        # action_list = action.tolist()  # Convert numpy array to a list
+
+        # Extract individual components of the action array, this works
+        action_x, action_y = action[0], action[1]
+
         message = [
             closest_food_distance, closest_food_angle,
-            closest_poison_distance, closest_poison_angle
+            closest_poison_distance, closest_poison_angle,
+            current_position.x, current_position.y,
+            action_x, action_y
         ]
 
         for i in range(self.n_pursuers):
             if i != agent_id:
                 self.communication_buffers[i].append(message)
+
+
+    # def handle_communication(self, agent_id):
+    #     obs = self.last_obs[agent_id]
+
+    #     closest_food_distance, closest_food_angle = self.get_closest_food_info(obs, self.n_sensors, self.sensor_range)
+    #     closest_poison_distance, closest_poison_angle = self.get_closest_poison_info(obs, self.n_sensors, self.sensor_range)
+
+    #     message = [
+    #         closest_food_distance, closest_food_angle,
+    #         closest_poison_distance, closest_poison_angle
+    #     ]
+
+    #     for i in range(self.n_pursuers):
+    #         if i != agent_id:
+    #             self.communication_buffers[i].append(message)
 
 
 
@@ -458,7 +483,7 @@ class WaterworldBase:
         self.intent_flags[agent_id] = self.determine_intent_from_observation(self.last_obs[agent_id])
 
         # Handle communication with updated sensory data
-        self.handle_communication(agent_id)
+        self.handle_communication(agent_id, action)
 
         p = self.pursuers[agent_id]
 
@@ -524,7 +549,7 @@ class WaterworldBase:
         return self.observe(agent_id)
 
     def observe(self, agent_id):
-        print(f'the observe{np.array(self.last_obs[agent_id], dtype=np.float32)} end here')
+        #print(f'the observe{np.array(self.last_obs[agent_id], dtype=np.float32)} end here')
         return np.array(self.last_obs[agent_id], dtype=np.float32)
 
     def observe_list(self):
@@ -662,7 +687,7 @@ class WaterworldBase:
 
              # Flatten and pad messages correctly
             messages = sum(self.communication_buffers[i], [])  # Flatten
-            # print(messages)
+            print(messages)
             padding_length = self.message_length * self.max_messages - len(messages)
             messages.extend([0] * padding_length)  # Pad with zeros
 
@@ -675,7 +700,7 @@ class WaterworldBase:
             # Ensure the observation matches the defined space size
             assert len(full_observation) == self.observation_space[0].shape[0], "Observation size mismatch"
             observe_list.append(full_observation)
-            print(f'the observe list{observe_list}end here')
+            #print(f'the observe list{observe_list}end here')
 
         return observe_list
 
