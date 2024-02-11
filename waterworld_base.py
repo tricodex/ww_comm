@@ -112,42 +112,42 @@ class WaterworldBase:
         closest_food_distance = np.min(food_distances)
 
         # Set intent to pursue if food is within a certain range
-        return 1 if closest_food_distance < self.sensor_range else 0
+        return 1 if closest_food_distance < (self.sensor_range/2) else 0 # threshold is arbitrary...
 
     def get_closest_food_info(self, obs, n_sensors, sensor_range):
         # Extract food sensor readings from the observation
         food_distances = obs[2 * n_sensors:3 * n_sensors]
-        food_angles = np.linspace(-np.pi, np.pi, n_sensors)  # Assuming equal distribution of sensors around the agent
+        food_velocities = obs[3 * n_sensors:4 * n_sensors] 
 
         # Find the index of the closest food
         closest_idx = np.argmin(food_distances)
 
-        # Distance and angle to the closest food
+        # Distance and velocity to the closest food
         closest_food_distance = food_distances[closest_idx]
-        closest_food_angle = food_angles[closest_idx]
+        closest_food_velocity = food_velocities[closest_idx]
 
         # Normalize distance based on sensor range
         closest_food_distance_normalized = closest_food_distance / sensor_range
 
-        return closest_food_distance_normalized, closest_food_angle
+        return closest_food_distance_normalized, closest_food_velocity
 
 
     def get_closest_poison_info(self, obs, n_sensors, sensor_range):
         # Extract poison sensor readings from the observation
         poison_distances = obs[4 * n_sensors:5 * n_sensors]
-        poison_angles = np.linspace(-np.pi, np.pi, n_sensors)  # Assuming equal distribution of sensors around the agent
+        poison_velocities = obs[5 * n_sensors:6 * n_sensors]
 
         # Find the index of the closest poison
         closest_idx = np.argmin(poison_distances)
 
-        # Distance and angle to the closest poison
+        # Distance and velocity to the closest poison
         closest_poison_distance = poison_distances[closest_idx]
-        closest_poison_angle = poison_angles[closest_idx]
+        closest_poison_velocity = poison_velocities[closest_idx]
 
         # Normalize distance based on sensor range
         closest_poison_distance_normalized = closest_poison_distance / sensor_range
 
-        return closest_poison_distance_normalized, closest_poison_angle
+        return closest_poison_distance_normalized, closest_poison_velocity
     
     def handle_communication(self, agent_id, action):
         obs = self.last_obs[agent_id]
@@ -175,12 +175,6 @@ class WaterworldBase:
 
     
 
-
-
-
-
-    
-
     def get_spaces(self):
         """Define the action and observation spaces for all of the agents."""
         if self.speed_features:
@@ -188,7 +182,7 @@ class WaterworldBase:
         else:
             obs_dim = 5 * self.n_sensors + 2
 
-        # Calculate the maximum observation dimension
+        # Expand the maximum observation dimension w/ the length of the comm buffer
         max_obs_dim = obs_dim + self.message_length * self.max_messages
         obs_space = spaces.Box(
             low=np.float32(-np.sqrt(2)), 
