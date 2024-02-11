@@ -23,7 +23,7 @@ To optimize the hyperparameters of the model, set the `process_to_run` variable 
 - `hueristic_policy.py`: Contains a basic heuristic policy for the agents in the Waterworld environment.
 - `settings.py`: Contains the settings for the Waterworld environment. -->
 
-# Waterworld Policy Evolution with Swarm Robotics
+# Waterworld w/ Communication
 
 This project applies Genetic Algorithms, Soft Actor-Critic (SAC), and Proximal Policy Optimization (PPO) algorithms from stable-baselines3 to evolve policies for agents in the Waterworld environment, part of the PettingZoo library. It aims to enhance decision-making in swarm robotics, particularly in the context of disaster management and complex, dynamic environments.
 
