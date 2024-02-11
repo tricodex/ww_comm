@@ -1,7 +1,7 @@
 # settings
 
 env_kwargs = {
-    "n_pursuers": 6,  # number of pursuing archea (agents)
+    "n_pursuers": 8,  # number of pursuing archea (agents)
     "n_evaders": 4,  # number of food objects
     "n_poisons": 10,  # number of poison objects
     "n_coop": 2,  # number of pursuing archea (agents) that must be touching food at the same time to consume it
