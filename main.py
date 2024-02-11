@@ -156,9 +156,9 @@ def eval(env_fn, model_name, model_subdir=TRAIN_DIR, num_games=100, render_mode=
                     rewards[a] += env.rewards[a]
 
                     # individual rewards
-                    ind_rewards = env.get_individual_rewards(a)
-                    for key in ind_rewards:
-                        individual_rewards[a][key] += ind_rewards[key]
+                    # ind_rewards = env.get_individual_rewards(a)
+                    # for key in ind_rewards:
+                    #     individual_rewards[a][key] += ind_rewards[key]
                 
                 if termination or truncation:
                     action = None
@@ -183,9 +183,9 @@ def eval(env_fn, model_name, model_subdir=TRAIN_DIR, num_games=100, render_mode=
                 rewards[agent] += reward  # Update rewards after action step
 
                 # individual rewards 
-                ind_rewards = env.get_individual_rewards(agent)
-                for key in ind_rewards:
-                        individual_rewards[agent][key] += ind_rewards[key]
+                # ind_rewards = env.get_individual_rewards(agent)
+                # for key in ind_rewards:
+                #         individual_rewards[agent][key] += ind_rewards[key]
 
         env.close()
     
@@ -247,7 +247,7 @@ def quick_test():
 if __name__ == "__main__":
     env_fn = waterworld_v4  
     process_to_run = 'qt'  # Choose "train", "optimize", "optimize_parallel" or "eval"
-    mdl = "PPO"# Choose "Heuristic", "PPO" or "SAC"
+    mdl = "Heuristic"# Choose "Heuristic", "PPO" or "SAC"
     
     # security check
     if mdl == "Heuristic":
