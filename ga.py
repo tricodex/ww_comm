@@ -107,7 +107,7 @@ class GeneticHyperparamOptimizer:
         train_function(env_fn, self.model_name, OPTIMIZE_DIR, steps=196_608, seed=0, **hyperparams)
 
         # Evaluate the trained model
-        avg_reward = eval_function(env_fn, self.model_name, model_subdir=OPTIMIZE_DIR, num_games=10 )
+        avg_reward = eval_function(env_fn, self.model_name, model_subdir=OPTIMIZE_DIR, num_games=2 )
         logging.info(f"Evaluating Individual: {individual}, Avg Reward: {avg_reward}")
         # Add fitness score to the individual
         individual['fitness'] = avg_reward
